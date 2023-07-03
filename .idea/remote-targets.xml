@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="ctfer@172.17.71.107:44" type="ssh/sftp" uuid="730d0f5d-911b-4732-8df8-f090b4af9891">
+        <config>
+          <option name="projectRootOnTarget" value="/home/ctfer/Vessel" />
+          <option name="serverName" value="ctfer@172.17.71.107:44 password" />
+        </config>
+        <ContributedStateBase type="GoLanguageRuntime">
+          <config>
+            <option name="goPath" value="/home/ctfer/gowork" />
+            <option name="goRoot" value="/usr/local/go/bin/go" />
+            <option name="goVersion" value="go1.18.5 linux/amd64" />
+          </config>
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>
