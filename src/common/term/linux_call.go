@@ -1,8 +1,10 @@
-package utils
+package term
 
-import (
-	"syscall"
-)
+import "syscall"
+
+func mount(source string, target string, fstype string, flags uintptr, data string) (err error) {
+	return syscall.Mount(source, target, fstype, flags, data)
+}
 
 /*
 	对进程操作的工具类
