@@ -2,55 +2,44 @@ package engine
 
 import (
 	"Vessel/src/common/term"
+	"Vessel/src/engine/daemon"
 	"fmt"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli"
 	"os"
 )
 
-func newDaemonCommand() *cobra.Command {
-	opts := newDaemonOptions(config.New())
+const usage = "Vessel is a tiny container."
 
-	cmd := &cobra.Command{
-		Use:           "dockerd [OPTIONS]",
-		Short:         "A self-sufficient runtime for containers.",
-		SilenceUsage:  true,
-		SilenceErrors: true,
-		Args:          cli.NoArgs,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			opts.flags = cmd.Flags()
-			daemonCli := NewDaemonCli()
-			return daemonCli.start(opts)
-		},
-		DisableFlagsInUseLine: true,
-		Version:               fmt.Sprintf("%s, build %s", dockerversion.Version, dockerversion.GitCommit),
-	}
-	cli.SetupRootCommand(cmd)
-
-	flags := cmd.Flags()
-	flags.BoolP("version", "v", false, "Print version information and quit")
-	flags.StringVar(&opts.configFile, "config-file", defaultDaemonConfigFile, "Daemon configuration file")
-	opts.InstallFlags(flags)
-	installConfigFlags(opts.daemonConfig, flags)
-	installServiceFlags(flags)
-
-	return cmd
-}
-
-func main() {
-	// 第一步开启日志记录程序
+// 创建Cli前，初始化Logrus
+func before(*cli.Context) error {
+	_, _, stderr := term.StdStreams()
 	logrus.SetFormatter(&logrus.TextFormatter{
 		TimestampFormat: term.RFC3339NanoFixed,
 		FullTimestamp:   true,
 	})
-	// 设置
-	_, _, stderr := term.StdStreams()
 	logrus.SetOutput(stderr)
+	return nil
+}
 
-	cmd := newDaemonCommand()
-	cmd.SetOut(stdout)
-	if err := cmd.Execute(); err != nil {
-		_, _ = fmt.Fprintf(stderr, "%s\n", err)
+// 创建Cli
+func main() {
+	_, _, stderr := term.StdStreams()
+	app := cli.NewApp()
+	app.Name = "Vessel-Server"
+	app.Usage = usage
+	app.Before = before
+	app.After = after
+	if err := app.Run(os.Args); err != nil {
+		logrus.Fatal(err)
+		_, _ = fmt.Fprintf(stderr, term.ErrorFmt, "App", err)
 		os.Exit(1)
 	}
+}
+
+// Cli创建后，启动TCP监听
+func after(*cli.Context) error {
+	wildcard := term.Wildcard(886)
+	d := daemon.Daemon{TcpConfig: wildcard}
+	return d.ActivateListeners()
 }

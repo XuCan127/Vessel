@@ -2,8 +2,8 @@ package term
 
 import "syscall"
 
-func mount(source string, target string, fstype string, flags uintptr, data string) (err error) {
-	return syscall.Mount(source, target, fstype, flags, data)
+func mount(source string, target string, fsType string, flags uintptr, data string) (err error) {
+	return syscall.Mount(source, target, fsType, flags, data)
 }
 
 /*
