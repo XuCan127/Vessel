@@ -1,7 +1,7 @@
 package cgroup
 
 import (
-	"github.com/Vessel/src/engine/module/cgroup/subsystem"
+	"github.com/Vessel/src/engine/module/cgroup/subSystems"
 	"path"
 )
 
