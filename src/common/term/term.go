@@ -33,10 +33,12 @@ func StdStreams() (stdIn io.ReadCloser, stdOut, stdErr io.Writer) {
 	return os.Stdin, os.Stdout, os.Stderr
 }
 
+// LoopBack 内网回路
 func LoopBack(port int) TcpConfig {
 	return TcpConfig{IP: net.IPv4(127, 0, 0, 1), Port: port}
 }
 
+// Wildcard 外网回路
 func Wildcard(port int) TcpConfig {
 	return TcpConfig{IP: net.IPv4(0, 0, 0, 0), Port: port}
 }

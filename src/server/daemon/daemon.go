@@ -55,12 +55,17 @@ func (daemon *Daemon) newHTTPRouter() *mux.Router {
 	// 创建 HTTP 路由器
 	router := mux.NewRouter()
 
+	// 添加中间件函数进行验证
+	router.Use(daemon.authenticateMiddleware)
+
 	// 注册 HTTP 路由
 	router.HandleFunc("/version", daemon.VersionHandler).Methods("GET")
-	router.HandleFunc("/images/json", daemon.ImagesJSONHandler).Methods("GET")
-	router.HandleFunc("/images/create", daemon.ImagesCreateHandler).Methods("POST")
-	router.HandleFunc("/containers/create", daemon.ContainerCreateHandler).Methods("POST")
-	router.HandleFunc("/containers/{name:.*}/json", daemon.ContainerInspectHandler).Methods("GET")
+	router.HandleFunc("/imageBase/add/{name}/{path}", daemon.ImageBaseAddHandler).Methods("POST")
+	router.HandleFunc("/imageBase/remove/{imageId}", daemon.ImageBaseRemoveHandler).Methods("POST")
+	router.HandleFunc("/imageBase/list", daemon.ImageBaseListHandler).Methods("POST")
+
+	router.HandleFunc("/containers/launch/{path}", daemon.ContainerLaunchHandler).Methods("POST")
+	router.HandleFunc("/containers/ps", daemon.ContainerPSHandler).Methods("POST")
 
 	return router
 }
