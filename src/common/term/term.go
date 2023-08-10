@@ -3,9 +3,11 @@ package term
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 	"path/filepath"
+	"strings"
 	"syscall"
 )
 
@@ -33,6 +35,15 @@ func StdStreams() (stdIn io.ReadCloser, stdOut, stdErr io.Writer) {
 	return os.Stdin, os.Stdout, os.Stderr
 }
 
+func CheckFS(filesystemName string) bool {
+	data, err := os.ReadFile("/proc/filesystems")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return strings.Contains(string(data), filesystemName)
+}
+
 // LoopBack 内网回路
 func LoopBack(port int) TcpConfig {
 	return TcpConfig{IP: net.IPv4(127, 0, 0, 1), Port: port}
@@ -52,7 +63,7 @@ func NewPipe() (*os.File, *os.File, error) {
 }
 
 func PivotRoot(root string) error {
-	if err := mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
+	if err := Mount(root, root, "bind", syscall.MS_BIND|syscall.MS_REC, ""); err != nil {
 		return fmt.Errorf(ErrorFmt, "mount", err)
 	}
 

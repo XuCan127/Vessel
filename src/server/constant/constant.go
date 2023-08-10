@@ -1,4 +1,4 @@
 package constant
 
 const Version = "beta23.8.8"
-const WorkDir = ""
+const WorkDir = "" //ramfs提高速度
