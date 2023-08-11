@@ -19,12 +19,12 @@ func (daemon *Daemon) ActivateListeners() error {
 		return err
 	}
 	if httpListener != nil {
-		go func() {
-			if err := daemon.serveHTTP(httpListener); err != nil {
-				logrus.Errorf(term.ErrorFmt, "startDemon", err)
-				daemon.Stop(httpListener)
-			}
-		}()
+		//go func() {
+		if err := daemon.serveHTTP(httpListener); err != nil {
+			logrus.Errorf(term.ErrorFmt, "startDemon", err)
+			daemon.Stop(httpListener)
+		}
+		//}()
 	}
 	return nil
 }
@@ -56,7 +56,7 @@ func (daemon *Daemon) newHTTPRouter() *mux.Router {
 	router := mux.NewRouter()
 
 	// 添加中间件函数进行验证
-	router.Use(daemon.authenticateMiddleware)
+	//router.Use(daemon.authenticateMiddleware)
 
 	// 注册 HTTP 路由
 	router.HandleFunc("/version", daemon.VersionHandler).Methods("GET")

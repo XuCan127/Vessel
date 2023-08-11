@@ -3,13 +3,15 @@ package main
 import (
 	"Vessel/src/common/term"
 	"Vessel/src/server/daemon"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"os"
 )
 
 const usage = "Vessel is a tiny container."
+
+func initConfig() {
+	//term.CheckFile(constant.ConfigFile,"")
+}
 
 // 创建Cli前，初始化Logrus
 func before(*cli.Context) error {
@@ -24,17 +26,18 @@ func before(*cli.Context) error {
 
 // 创建Cli
 func main() {
-	_, _, stderr := term.StdStreams()
-	app := cli.NewApp()
-	app.Name = "Vessel-Server"
-	app.Usage = usage
-	app.Before = before
-	app.After = after
-	if err := app.Run(os.Args); err != nil {
-		logrus.Fatal(err)
-		_, _ = fmt.Fprintf(stderr, term.ErrorFmt, "App", err)
-		os.Exit(1)
-	}
+	after(nil)
+	//_, _, stderr := term.StdStreams()
+	//app := cli.NewApp()
+	//app.Name = "Vessel-Server"
+	//app.Usage = usage
+	//app.Before = before
+	//app.After = after
+	//if err := app.Run(os.Args); err != nil {
+	//	logrus.Fatal(err)
+	//	_, _ = fmt.Fprintf(stderr, term.ErrorFmt, "App", err)
+	//	os.Exit(1)
+	//}
 }
 
 // Cli创建后，启动TCP监听

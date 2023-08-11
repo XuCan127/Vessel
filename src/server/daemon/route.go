@@ -3,7 +3,9 @@ package daemon
 import (
 	"Vessel/src/common/jsonStruct"
 	"Vessel/src/server/constant"
+	"Vessel/src/server/imageBaseCenter"
 	"encoding/json"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 
@@ -24,19 +26,33 @@ func (daemon *Daemon) VersionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (daemon *Daemon) ImageBaseAddHandler(w http.ResponseWriter, r *http.Request) {
-	// 从URL路径中获取名称参数
-	//vars := mux.Vars(r)
-	//name := vars["name"]
-	//path := vars["path"]
-
-	// 假设添加图片成功
+	vars := mux.Vars(r)
+	name := vars["name"]
+	path := vars["path"]
 	success := true
-	msg := "Image added successfully."
+	msg := ""
+	imageBase := jsonStruct.ImageBase{}
 
+	isExist, err := imageBaseCenter.IsExist(name)
+	if isExist {
+		success = false
+		msg = "Found exist imageBase."
+		goto rtn
+	}
+	if err != nil {
+		success = false
+		msg = err.Error()
+		goto rtn
+	}
+
+	imageBase, err = imageBaseCenter.AddImageBase(name, path)
+
+rtn:
 	// 创建响应对象
 	response := jsonStruct.ImageBaseAddResponse{
-		Success: success,
-		Msg:     msg,
+		Success:   success,
+		Msg:       msg,
+		ImageBase: imageBase,
 	}
 
 	// 将响应对象转换为 JSON 格式

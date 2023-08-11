@@ -23,6 +23,7 @@ const (
 )
 
 const RFC3339NanoFixed = "2006-01-02T15:04:05.000000000Z07:00"
+const CreateTimeFmt = "01月02日 15时04分"
 
 const ErrorFmt = "failed to %s: %v.\n"
 
@@ -35,12 +36,29 @@ func StdStreams() (stdIn io.ReadCloser, stdOut, stdErr io.Writer) {
 	return os.Stdin, os.Stdout, os.Stderr
 }
 
+func CheckFile(path string, defaultContent []byte) {
+	// 检查文件是否存在
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
+		// 文件不存在，创建文件并写入内容
+		err := os.WriteFile(path, defaultContent, 0644)
+		if err != nil {
+			fmt.Println("无法创建文件:", err)
+			return
+		}
+
+		fmt.Println("文件已创建并写入内容")
+	} else {
+		// 其他错误情况
+		fmt.Println("发生错误:", err)
+	}
+}
+
 func CheckFS(filesystemName string) bool {
 	data, err := os.ReadFile("/proc/filesystems")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	return strings.Contains(string(data), filesystemName)
 }
 
