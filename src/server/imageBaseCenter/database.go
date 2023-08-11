@@ -8,15 +8,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"sync"
 )
 
-var databaseMutex sync.Mutex
-
 func readDatabase() ([]jsonStruct.ImageBase, error) {
-	databaseMutex.Lock()
-	defer databaseMutex.Unlock()
-
 	fd, err := os.OpenFile(constant.ImagesList, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("open file " + constant.ImagesList + " fail: " + err.Error())
@@ -50,9 +44,6 @@ func readDatabase() ([]jsonStruct.ImageBase, error) {
 
 // 将数据库内容写入文件
 func writeDatabase(images []jsonStruct.ImageBase) error {
-	databaseMutex.Lock()
-	defer databaseMutex.Unlock()
-
 	fd, err := os.OpenFile(constant.ImagesList, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println("open file " + constant.ImagesList + " fail: " + err.Error())

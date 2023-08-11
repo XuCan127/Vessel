@@ -6,7 +6,6 @@ import (
 	"Vessel/src/server/constant"
 	"Vessel/src/server/imageBaseCenter"
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"net/http"
@@ -26,9 +25,6 @@ func (daemon *Daemon) ImageBaseAddHandler(w http.ResponseWriter, r *http.Request
 	argName := vars["name"]
 	argPath := vars["path"]
 
-	fmt.Printf("Name: %s\n", argName)
-	fmt.Printf("Path: %s\n", argPath)
-
 	imageBaseID := uuid.New().String()
 	unzipPath := filepath.Join(constant.ImagesDir, imageBaseID)
 
@@ -39,7 +35,7 @@ func (daemon *Daemon) ImageBaseAddHandler(w http.ResponseWriter, r *http.Request
 		ImageBase: jsonStruct.ImageBase{},
 	}
 
-	isExist, err := imageBaseCenter.IsExist(argName)
+	isExist, err := imageBaseCenter.IsNameExist(argName)
 	if isExist {
 		response.Success = false
 		response.Msg = "Found exist imageBase."
@@ -74,7 +70,37 @@ rtn:
 }
 
 func (daemon *Daemon) ImageBaseRemoveHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	argImageId := vars["imageId"]
 
+	unzipPath := filepath.Join(constant.ImagesDir, argImageId)
+
+	// 创建响应对象
+	response := jsonStruct.ImageBaseRemoveResponse{
+		Success: true,
+		Msg:     "",
+	}
+	isExist, err := imageBaseCenter.IsIdExist(argImageId)
+	if !isExist {
+		response.Success = false
+		response.Msg = "Not Found exist imageBase."
+		goto rtn
+	}
+	if err != nil {
+		response.Success = false
+		response.Msg = err.Error()
+		goto rtn
+	}
+	err = imageBaseCenter.RemoveImageBase(argImageId)
+	if err != nil {
+		response.Success = false
+		response.Msg = err.Error()
+		goto rtn
+	}
+	os.RemoveAll(unzipPath)
+
+rtn:
+	sendResponse(response, w)
 }
 func (daemon *Daemon) ImageBaseListHandler(w http.ResponseWriter, r *http.Request) {
 	response := jsonStruct.ImageBaseListResponse{
