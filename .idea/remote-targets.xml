@@ -15,6 +15,19 @@
           </config>
         </ContributedStateBase>
       </target>
+      <target name="simon@192.168.142.137:22" type="ssh/sftp" uuid="6bf26c2b-7b9f-44a7-a523-2b925b9ba354">
+        <config>
+          <option name="projectRootOnTarget" value="/home/simon/Vessel" />
+          <option name="serverName" value="simon@192.168.142.137:22 password" />
+        </config>
+        <ContributedStateBase type="GoLanguageRuntime">
+          <config>
+            <option name="goPath" value="/home/simon/go" />
+            <option name="goRoot" value="/snap/bin/go" />
+            <option name="goVersion" value="go1.20.7 linux/amd64" />
+          </config>
+        </ContributedStateBase>
+      </target>
     </targets>
   </component>
 </project>

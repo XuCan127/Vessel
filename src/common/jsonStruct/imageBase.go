@@ -18,7 +18,7 @@ type ImageBaseRemoveResponse struct {
 }
 
 type ImageBaseListResponse struct {
-	Success   bool        `json:"success"`
-	Msg       string      `json:"msg"`
-	ImageBase []ImageBase `json:"image bases"`
+	Success    bool        `json:"success"`
+	Msg        string      `json:"msg"`
+	ImageBases []ImageBase `json:"image bases"`
 }

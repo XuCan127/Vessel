@@ -2,18 +2,12 @@ package imageBaseCenter
 
 import (
 	"Vessel/src/common/jsonStruct"
-	"Vessel/src/common/term"
 	"fmt"
-	"time"
 )
 
 import "sync"
 
 var mutex sync.Mutex
-
-func init() {
-
-}
 
 func IsExist(name string) (bool, error) {
 	mutex.Lock()
@@ -34,17 +28,19 @@ func IsExist(name string) (bool, error) {
 	return false, nil
 }
 
-func AddImageBase(name, path string) (jsonStruct.ImageBase, error) {
+func AddImageBase(newBase jsonStruct.ImageBase) error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	newBase := jsonStruct.ImageBase{Name: name, CreatedTime: time.Now().Format(term.CreateTimeFmt)}
 	oldImageFile, err := readDatabase()
 	if err != nil {
-		return jsonStruct.ImageBase{}, fmt.Errorf("Failed to get ImageBaseFile: %v", err)
+		return fmt.Errorf("Failed to get ImageBaseFile: %v", err)
 	}
 	oldImageFile = append(oldImageFile, newBase)
 
-	writeDatabase(oldImageFile)
-	return newBase, nil
+	return writeDatabase(oldImageFile)
+}
+
+func ListImageBases() ([]jsonStruct.ImageBase, error) {
+	return readDatabase()
 }

@@ -60,7 +60,7 @@ func (daemon *Daemon) newHTTPRouter() *mux.Router {
 
 	// 注册 HTTP 路由
 	router.HandleFunc("/version", daemon.VersionHandler).Methods("GET")
-	router.HandleFunc("/imageBase/add/{name}/{path}", daemon.ImageBaseAddHandler).Methods("POST")
+	router.PathPrefix("/imageBase/add/{name}/{path}").HandlerFunc(daemon.ImageBaseAddHandler).Methods("POST")
 	router.HandleFunc("/imageBase/remove/{imageId}", daemon.ImageBaseRemoveHandler).Methods("POST")
 	router.HandleFunc("/imageBase/list", daemon.ImageBaseListHandler).Methods("POST")
 

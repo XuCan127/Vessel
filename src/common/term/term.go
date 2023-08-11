@@ -1,6 +1,8 @@
 package term
 
 import (
+	"Vessel/src/server/constant"
+	"archive/zip"
 	"fmt"
 	"io"
 	"log"
@@ -105,4 +107,65 @@ func PivotRoot(root string) error {
 	}
 
 	return os.Remove(pivotDir)
+}
+
+func Unzip(zipPath, destPath string) error {
+	// 打开ZIP文件
+	r, err := zip.OpenReader(zipPath)
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	var errorCount int // 错误计数器
+
+	for _, f := range r.File {
+		rc, err := f.Open()
+		if err != nil {
+			errorCount++
+			continue
+		}
+
+		targetPath := filepath.Join(destPath, f.Name)
+
+		if f.FileInfo().IsDir() {
+			err = os.MkdirAll(targetPath, f.Mode())
+			if err != nil {
+				errorCount++
+				rc.Close()
+				continue
+			}
+		} else {
+			err = os.MkdirAll(filepath.Dir(targetPath), os.ModePerm)
+			if err != nil {
+				errorCount++
+				rc.Close()
+				continue
+			}
+
+			targetFile, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+			if err != nil {
+				errorCount++
+				rc.Close()
+				continue
+			}
+
+			_, err = io.Copy(targetFile, rc)
+			targetFile.Close()
+			if err != nil {
+				errorCount++
+				continue
+			}
+		}
+
+		rc.Close()
+	}
+
+	if errorCount > constant.Retry {
+		// 出现错误，删除已解压的部分
+		os.RemoveAll(destPath)
+		return fmt.Errorf("unzip failed with %d errors", errorCount)
+	}
+
+	return nil
 }
