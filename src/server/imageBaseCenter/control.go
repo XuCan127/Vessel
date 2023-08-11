@@ -5,14 +5,7 @@ import (
 	"fmt"
 )
 
-import "sync"
-
-var mutex sync.Mutex
-
 func IsExist(name string) (bool, error) {
-	mutex.Lock()
-	defer mutex.Unlock()
-
 	imageFile, err := readDatabase()
 	if err != nil {
 		return false, fmt.Errorf("Failed to get ImageBaseFile: %v", err)
@@ -29,9 +22,6 @@ func IsExist(name string) (bool, error) {
 }
 
 func AddImageBase(newBase jsonStruct.ImageBase) error {
-	mutex.Lock()
-	defer mutex.Unlock()
-
 	oldImageFile, err := readDatabase()
 	if err != nil {
 		return fmt.Errorf("Failed to get ImageBaseFile: %v", err)
