@@ -102,6 +102,7 @@ func (daemon *Daemon) ImageBaseRemoveHandler(w http.ResponseWriter, r *http.Requ
 rtn:
 	sendResponse(response, w)
 }
+
 func (daemon *Daemon) ImageBaseListHandler(w http.ResponseWriter, r *http.Request) {
 	response := jsonStruct.ImageBaseListResponse{
 		Success:    true,
@@ -116,6 +117,7 @@ func (daemon *Daemon) ImageBaseListHandler(w http.ResponseWriter, r *http.Reques
 		goto rtn
 	}
 	response.ImageBases = bases
+
 rtn:
 	sendResponse(response, w)
 }

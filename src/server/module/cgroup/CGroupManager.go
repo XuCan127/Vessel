@@ -1,7 +1,7 @@
 package cgroup
 
 import (
-	"Vessel/src/cgroup/subSystems"
+	"Vessel/src/server/module/cgroup/subSystems"
 	"path"
 )
 

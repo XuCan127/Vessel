@@ -26,7 +26,7 @@ func before(*cli.Context) error {
 
 // 创建Cli
 func main() {
-	after(nil)
+	//after(nil)
 	//_, _, stderr := term.StdStreams()
 	//app := cli.NewApp()
 	//app.Name = "Vessel-Server"
